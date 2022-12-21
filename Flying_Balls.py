@@ -1,6 +1,6 @@
 import pymunk
 from settings import *
-
+import time
 
 class FlyingBall:
     def __init__(self, space, ball_type='beat', vector=None):
@@ -39,6 +39,27 @@ class BallManager:
         self.space = space
         self.ball_list = []
         self.beat_ball_list = []
+        self.timer = time.time()
+        self.counter = 0
+        self.game_over = False
 
-    def create_balls(self):
-        pass
+    def check_timer(self, duration: float= 2.0):
+        now = time.time()
+        if now - self.timer > duration:
+            self.timer = time.time()
+            return True
+        else:
+            return False
+
+    def create_balls(self, every_second: float = 2.5, max_number: int = 5):
+        if self.check_timer(every_second):
+            if self.counter <= max_number:
+                self.ball_list.append(FlyingBall(self.space, ball_type='normal'))
+                self.counter += 1
+            else:
+                self.game_over = True
+
+    def remove_excess_balls(self, limit: int= 5):
+        if len(self.ball_list) > limit:
+            self.space.remove(self.ball_list[0].shape, self.ball_list[0].body)
+            self.ball_list = self.ball_list[1:]

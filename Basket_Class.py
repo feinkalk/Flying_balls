@@ -35,7 +35,7 @@ class Basket:
 
     def check_goal(self, ball_list):
         for index, ball in enumerate(ball_list):
-            if (self.position[0] - self.width / 2 < ball.body.position[0] < self.position[0] + self.width / 2 and
+            if (self.position[0] - self.width * 0.4 < ball.body.position[0] < self.position[0] + self.width / 2 and
                 self.position[1] - self.height / 3 < ball.body.position[1] < self.position[1] + self.height / 2):
 
                 self.score += 1

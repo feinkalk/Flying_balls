@@ -74,8 +74,9 @@ def run_func(window, width, height):
     space.gravity = (0, 981)
     target_line = TargetVector(window)
     basket = Basket(space)
+    ball_manager = BallManager(space)
     create_boundaries(space, 100, 100)
-    score_panel = ScorePanel(window, basket)
+    score_panel = ScorePanel(window, basket, ball_manager)
     create_lines(space)
     draw_options = pymunk.pygame_util.DrawOptions(window)
 
@@ -85,37 +86,11 @@ def run_func(window, width, height):
                 run = False
                 break
 
-            if event.type == pg.MOUSEBUTTONDOWN:
-                for ball in ball_list:
-                    impulse_direction = (100, 0)
-                    impulse_force = (200, 200)
-
-                    ball.beat_ball(impulse_direction, impulse_force)
-
-                    line_start = (int(ball.body.position[0] + impulse_direction[0]),
-                                  int(ball.body.position[1] - impulse_direction[1]))
-
-                    line_end = (int(ball.body.position[0] + impulse_direction[0] + impulse_force[0]),
-                                int(ball.body.position[1] - impulse_direction[1]) - impulse_force[1])
-                    global vector
-                    vector = (line_start, line_end)
-
-            if event.type == pg.KEYDOWN and event.key == pg.K_LCTRL:
-                ball_list.append(FlyingBall(space, ball_type='normal'))
-
             if event.type == pg.KEYDOWN and event.key == pg.K_LALT:
                 beat_ball_list.append(FlyingBall(space, ball_type='beat', vector=target_line))
 
-        #create balls
-        if time_elapsed_since_last_action > 2000:
-            ball_list.append(FlyingBall(space, ball_type='normal'))
-
-            if len(ball_list) > 5:
-                space.remove(ball_list[0].shape, ball_list[0].body)
-                ball_list = ball_list[1:]
-
-            time_elapsed_since_last_action = 0
-
+        ball_manager.create_balls(max_number=10)
+        ball_manager.remove_excess_balls()
         basket.check_goal(ball_list)
 
         # draw and tick
@@ -130,3 +105,18 @@ def run_func(window, width, height):
 
 if __name__ == '__main__':
     run_func(window, WIDTH, HEIGHT)
+
+# if event.type == pg.MOUSEBUTTONDOWN:
+#     for ball in ball_list:
+#         impulse_direction = (100, 0)
+#         impulse_force = (200, 200)
+#
+#         ball.beat_ball(impulse_direction, impulse_force)
+#
+#         line_start = (int(ball.body.position[0] + impulse_direction[0]),
+#                       int(ball.body.position[1] - impulse_direction[1]))
+#
+#         line_end = (int(ball.body.position[0] + impulse_direction[0] + impulse_force[0]),
+#                     int(ball.body.position[1] - impulse_direction[1]) - impulse_force[1])
+#         global vector
+#         vector = (line_start, line_end)
